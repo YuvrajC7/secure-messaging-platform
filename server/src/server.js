@@ -230,23 +230,16 @@ io.on('connection', (socket) => {
     });
 
     // =============================
-    // USER ONLINE
+    // CHECK IF ONLINE
     // =============================
-    if (
-      recipientSocket &&
-      recipientSocket.connected
-    ) {
+    const isOnline = recipientSocket && recipientSocket.connected;
 
-      recipientSocket.emit(
-        'message-received',
-        messagePayload
-      );
-
-      return;
+    if (isOnline) {
+      recipientSocket.emit('message-received', messagePayload);
     }
 
     // =============================
-    // USER OFFLINE -> SAVE TO DB
+    // SAVE EVERY MESSAGE TO DB
     // =============================
     try {
 
@@ -256,14 +249,16 @@ io.on('connection', (socket) => {
           sender: registeredUsername,
           recipient: recipient,
           content: content,
-          delivered: false
+          delivered: isOnline
         });
       if (error) throw error;
 
-      socket.emit('sys-alert', {
-        type: 'warning',
-        message: `Recipient '${recipient}' is offline. Message stored in database.`
-      });
+      if (!isOnline) {
+        socket.emit('sys-alert', {
+          type: 'warning',
+          message: `Recipient '${recipient}' is offline. Message stored in database.`
+        });
+      }
 
     } catch (err) {
 
