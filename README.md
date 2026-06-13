@@ -72,7 +72,7 @@ npm start -- --username TESTUSER2
 ## Usage
 To send an encrypted message, simply tag the user and type your message:
 ```text
-Alice > @Bob Hello! This message is end-to-end encrypted!
+TESTUSER1 > @TESTUSER2 Hello! This message is end-to-end encrypted!
 ```
 
-If Bob is offline, the message will be queued in Supabase and delivered the moment he logs in.
+If TESTUSER2 is offline, the message will be queued in Supabase and delivered the moment he logs in.
