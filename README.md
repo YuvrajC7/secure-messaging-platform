@@ -60,13 +60,13 @@ npm start
 In your second terminal, launch the chat client. You must provide a unique username:
 ```bash
 cd client
-npm start -- --username Alice
+npm start -- --username TESTUSER1
 ```
 
 Open a third terminal for the recipient:
 ```bash
 cd client
-npm start -- --username Bob
+npm start -- --username TESTUSER2
 ```
 
 ## Usage
