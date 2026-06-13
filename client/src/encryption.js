@@ -1,12 +1,24 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
-export function generateKeyPair() {
+export function getOrGenerateKeyPair(username) {
+    const keyFile = path.resolve(`.keys_${username}.json`);
+    if (fs.existsSync(keyFile)) {
+        try {
+            return JSON.parse(fs.readFileSync(keyFile, 'utf8'));
+        } catch (e) {}
+    }
+    
     const ecdh = crypto.createECDH('secp256k1');
     ecdh.generateKeys();
-    return {
+    const keys = {
         privateKey: ecdh.getPrivateKey('hex'),
         publicKey: ecdh.getPublicKey('hex')
     };
+    
+    fs.writeFileSync(keyFile, JSON.stringify(keys));
+    return keys;
 }
 
 export function computeSharedSecret(myPrivateKeyHex, theirPublicKeyHex) {

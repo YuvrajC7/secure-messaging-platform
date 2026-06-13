@@ -4,7 +4,7 @@ import TextInput from 'ink-text-input';
 import { io } from 'socket.io-client';
 import chalk from 'chalk';
 import { getWebhookUrl, setWebhookUrl, clearWebhookUrl } from './config.js';
-import { generateKeyPair, computeSharedSecret, encryptMessage, decryptMessage } from './encryption.js';
+import { getOrGenerateKeyPair, computeSharedSecret, encryptMessage, decryptMessage } from './encryption.js';
 
 export default function App({ username }) {
   const { exit } = useApp();
@@ -14,7 +14,7 @@ export default function App({ username }) {
   const [activeWebhook, setActiveWebhook] = useState(getWebhookUrl() || 'Not Configured');
   const [socket, setSocket] = useState(null);
   const [lastRecipient, setLastRecipient] = useState(null);
-  const [keys] = useState(() => generateKeyPair());
+  const [keys] = useState(() => getOrGenerateKeyPair(username));
   const sentMessagesRef = useRef(new Map());
 
   // Helper to add system and diagnostic log messages to screen (emoji-free, professional logs)

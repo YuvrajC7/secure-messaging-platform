@@ -19,3 +19,4 @@ client/config.json
 *.log
 #env file
 .env
+.keys_*.json
