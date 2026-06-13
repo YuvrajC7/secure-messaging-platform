@@ -284,9 +284,7 @@ io.on('connection', (socket) => {
       activeUsers.delete(
         registeredUsername
       );
-      publicKeys.delete(
-        registeredUsername
-      );
+      // Keep public key in memory so offline users can still receive E2EE messages!
 
       socket.broadcast.emit('sys-event', {
         type: 'info',
