@@ -15,6 +15,7 @@ export default function App({ username }) {
   const [socket, setSocket] = useState(null);
   const [lastRecipient, setLastRecipient] = useState(null);
   const [keys] = useState(() => generateKeyPair());
+  const sentMessagesRef = useRef(new Map());
 
   // Helper to add system and diagnostic log messages to screen (emoji-free, professional logs)
   const addSystemMessage = (text, type = 'info') => {
@@ -120,7 +121,9 @@ export default function App({ username }) {
       let displayText = msg.content;
       try {
          const parsed = JSON.parse(msg.content);
-         if (parsed.plaintextForMe) displayText = parsed.plaintextForMe;
+         if (parsed.ciphertext && sentMessagesRef.current.has(parsed.ciphertext)) {
+            displayText = sentMessagesRef.current.get(parsed.ciphertext);
+         }
       } catch(e) {}
 
       setMessages((prev) => [
@@ -227,7 +230,10 @@ export default function App({ username }) {
         try {
            const sharedSecret = computeSharedSecret(keys.privateKey, recipientPubKey);
            const ciphertext = encryptMessage(text, sharedSecret);
-           const payloadStr = JSON.stringify({ ciphertext, senderPublicKey: keys.publicKey, plaintextForMe: text });
+           const payloadStr = JSON.stringify({ ciphertext, senderPublicKey: keys.publicKey });
+           
+           // Store the plaintext locally so we can render it when the server echoes message-sent
+           sentMessagesRef.current.set(ciphertext, text);
            
            socket.emit('direct-message', { recipient, content: payloadStr });
            setLastRecipient(recipient);
